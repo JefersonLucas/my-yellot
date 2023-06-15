@@ -4,8 +4,7 @@ import {
 	useFonts,
 } from '@expo-google-fonts/montserrat'
 import { HomeScreen } from '@screens/Home'
-import { StatusBar } from 'expo-status-bar'
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, StatusBar, View } from 'react-native'
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -14,14 +13,13 @@ export default function App() {
 	})
 
 	return (
-		<>
-			{fontsLoaded ? (
+		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+			<StatusBar barStyle="dark-content" backgroundColor="#fff" translucent />
+			{!fontsLoaded ? (
 				<HomeScreen />
 			) : (
-				<ActivityIndicator size={50} color="#6201D1" />
+				<ActivityIndicator size={70} color="#6201D1" />
 			)}
-
-			<StatusBar style="auto" />
-		</>
+		</View>
 	)
 }
