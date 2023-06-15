@@ -4,7 +4,8 @@ import {
 	useFonts,
 } from '@expo-google-fonts/montserrat'
 import { HomeScreen } from '@screens/Home'
-import { ActivityIndicator, StatusBar, View } from 'react-native'
+import { NativeBaseProvider } from 'native-base'
+import { ActivityIndicator, StatusBar } from 'react-native'
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -13,13 +14,13 @@ export default function App() {
 	})
 
 	return (
-		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+		<NativeBaseProvider>
 			<StatusBar barStyle="dark-content" backgroundColor="#fff" translucent />
-			{!fontsLoaded ? (
+			{fontsLoaded ? (
 				<HomeScreen />
 			) : (
 				<ActivityIndicator size={70} color="#6201D1" />
 			)}
-		</View>
+		</NativeBaseProvider>
 	)
 }
