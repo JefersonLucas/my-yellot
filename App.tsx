@@ -1,10 +1,13 @@
+import { Loading } from '@components'
 import {
 	Montserrat_400Regular,
 	Montserrat_700Bold,
 	useFonts,
 } from '@expo-google-fonts/montserrat'
 import { HomeScreen } from '@screens/Home'
-import { ActivityIndicator, StatusBar, View } from 'react-native'
+import { theme } from '@theme'
+import { NativeBaseProvider } from 'native-base'
+import { StatusBar } from 'react-native'
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -13,13 +16,14 @@ export default function App() {
 	})
 
 	return (
-		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-			<StatusBar barStyle="dark-content" backgroundColor="#fff" translucent />
-			{!fontsLoaded ? (
-				<HomeScreen />
-			) : (
-				<ActivityIndicator size={70} color="#6201D1" />
-			)}
-		</View>
+		<NativeBaseProvider theme={theme}>
+			<StatusBar
+				barStyle="dark-content"
+				backgroundColor="transparent"
+				translucent
+			/>
+
+			{fontsLoaded ? <HomeScreen /> : <Loading />}
+		</NativeBaseProvider>
 	)
 }

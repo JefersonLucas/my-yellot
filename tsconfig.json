@@ -6,11 +6,13 @@
     "paths": {
       "@dtos/*": ["src/dtos/*"],
       "@assets/*": ["./src/assets/*"],
+      "@components": ["./src/components"],
       "@components/*": ["./src/components/*"],
       "@screens/*": ["./src/screens/*"],
       "@utils/*": ["./src/utils/*"],
       "@services/*": ["./src/services/*"],
       "@hooks/*": ["./src/hooks/*"],
+      "@theme": ["./src/theme"],
     }
   }
 }
