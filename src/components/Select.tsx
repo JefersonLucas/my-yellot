@@ -5,16 +5,19 @@ import { Select as SelectNB } from 'native-base'
 type ItemsProps = { label: string; value: string }
 
 type SelectProps = {
-	value: string
-	setValue: React.Dispatch<React.SetStateAction<string>>
+	value?: string
+	setValue?: React.Dispatch<React.SetStateAction<string>>
 	items: ItemsProps[]
+	disabled?: boolean
 }
 
-export function Select({ value, setValue, items }: SelectProps) {
+export function Select({ value, setValue, items, disabled }: SelectProps) {
 	return (
 		<SelectNB
+			testID="select-input"
 			selectedValue={value}
-			minWidth="3/4"
+			isDisabled={disabled}
+			flex={1}
 			height={12}
 			accessibilityLabel="Escolha o serviço"
 			placeholder="Escolha o serviço"
@@ -30,7 +33,7 @@ export function Select({ value, setValue, items }: SelectProps) {
 				),
 			}}
 			mt={1}
-			onValueChange={(itemValue) => setValue(itemValue)}
+			onValueChange={(itemValue) => setValue && setValue(itemValue)}
 		>
 			{items.map((item) => (
 				<SelectNB.Item key={item.label} label={item.label} value={item.value} />
