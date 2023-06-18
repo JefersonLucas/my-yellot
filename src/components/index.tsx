@@ -1,4 +1,3 @@
-export * from '@components/Button'
 export * from '@components/Chart'
 export * from '@components/Header'
 export * from '@components/Info'
