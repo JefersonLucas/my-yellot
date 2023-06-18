@@ -1,12 +1,17 @@
-import { Button, Chart, Header, Select, Title, TotalInfo } from '@components'
-import { InfoProps } from '@components/Info'
-import { Data, fetchData } from '@utils/fakeDatas'
-import { Center, HStack, ScrollView, VStack } from 'native-base'
+import { Chart, Header, Select, Title, TotalInfo } from '@components'
+import { Data } from '@interfaces/Data'
+import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
+import { formatedData } from '@utils/formatedData'
+import { Center, HStack, ScrollView, VStack, useToast } from 'native-base'
 import React, { useEffect, useState } from 'react'
 
 export function HomeScreen() {
 	const [service, setService] = useState('')
 	const [data, setData] = useState<Data | undefined>(undefined)
+	const [loading, setLoading] = useState(false)
+
+	const toast = useToast()
 
 	const items = [
 		{
@@ -27,103 +32,43 @@ export function HomeScreen() {
 		},
 	]
 
-	const infoValues: number[] | [] = data ? Object.values(data.totals) : []
-	const infoKeys: string[] | [] = data ? Object.keys(data.totals) : []
-	const labels: string[] | [] = data ? data.x_labels : []
-	const generated = data ? data.generation : []
-	const expected = data ? data.expected : []
+	async function handleFetchData() {
+		try {
+			setLoading(true)
 
-	const infos: InfoProps[] = infoKeys.map((item, index) => {
-		return {
-			type: item,
-			body:
-				item === 'kwh'
-					? 'Total de energia'
-					: item === 'percentage'
-					? 'Percentual'
-					: item === 'trees'
-					? 'Árvores cultivadas'
-					: 'Carbono evitado',
-			heading:
-				item && item === 'kwh'
-					? `${Number(infoValues[index]).toLocaleString('pt-BR')} kwh`
-					: item && item === 'percentage'
-					? `${Number(infoValues[index]).toLocaleString('pt-BR')}%`
-					: item && item === 'trees'
-					? `${Number(infoValues[index]).toLocaleString('pt-BR')}`
-					: item && item === 'co2'
-					? `${Number(infoValues[index]).toLocaleString('pt-BR')} kg`
-					: '',
-		}
-	})
+			if (service) {
+				const { data } = await api.get(`/test-2023?dataType=${service}`)
 
-	const gData = labels.map((item, index) => {
-		if (service === 'daily') {
-			return {
-				x: item.slice(8, 10),
-				y: generated[index],
+				setData(data.data)
 			}
-		}
-		if (service === 'hourly') {
-			return {
-				x: `${item.slice(0, 2)}h`,
-				y: generated[index],
-			}
-		}
-		if (service === 'monthly') {
-			return {
-				x: item.slice(0, 7).replace('-', '/'),
-				y: generated[index],
-			}
-		}
-		if (service === 'yearly') {
-			return {
-				x: item.slice(0, 4),
-				y: generated[index],
-			}
-		}
-	})
 
-	const eData = labels.map((item, index) => {
-		if (service === 'daily') {
-			return {
-				x: item.slice(8, 10),
-				y: expected[index],
-			}
-		}
-		if (service === 'hourly') {
-			return {
-				x: `${item.slice(0, 2)}h`,
-				y: expected[0],
-			}
-		}
-		if (service === 'monthly') {
-			return {
-				x: item.slice(0, 7).replace('-', '/'),
-				y: expected[index] ? expected[index] : 0,
-			}
-		}
-		if (service === 'yearly') {
-			return {
-				x: item.slice(0, 4),
-				y: expected[index],
-			}
-		}
-	})
+			setLoading(false)
+		} catch (error) {
+			const isAppError = error instanceof AppError
 
-	function handleData() {
-		if (service === 'hourly') setData(fetchData('hourly'))
-		if (service === 'daily') setData(fetchData('daily'))
-		if (service === 'monthly') setData(fetchData('monthly'))
-		if (service === 'yearly') setData(fetchData('yearly'))
+			const title = isAppError
+				? error.message
+				: 'Não foi possível acessar seus dados. Tente novamente mais tarde'
+
+			toast.show({
+				title,
+				placement: 'top',
+				bgColor: 'red.500',
+			})
+		} finally {
+			setLoading(false)
+		}
 	}
 
-	useEffect(() => handleData(), [service])
+	const { infos, eData, gData } = formatedData({ data, service })
+
+	useEffect(() => {
+		handleFetchData()
+	}, [service])
 
 	return (
 		<VStack flex={1} bg="gray.200">
 			<Header />
-
 			<Center px={4}>
 				<Title title="Seu Dashboard" />
 
@@ -135,9 +80,12 @@ export function HomeScreen() {
 					rounded="lg"
 					shadow="2"
 				>
-					<Select value={service} setValue={setService} items={items} />
-
-					<Button onPress={handleData} />
+					<Select
+						value={service}
+						setValue={setService}
+						items={items}
+						disabled={loading}
+					/>
 				</HStack>
 
 				<TotalInfo data={infos} />
