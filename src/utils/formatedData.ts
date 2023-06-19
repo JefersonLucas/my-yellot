@@ -6,13 +6,39 @@ type Props = {
 	service: string
 }
 
-export function formatedData({ data, service }: Props) {
+/**
+ * This function returns the formatted data needed for the charts.
+ *
+ * @param {data} Props.data - A data object.
+ * @param {string} Props.service - A string service.
+ * @returns {Object} - Returns the object containing the information, the generated data and the expected data.
+ */
+export function formatedData({ data, service }: Props): {
+	infos: InfoProps[]
+	gData: (
+		| {
+				x: string
+				y: number
+		  }
+		| undefined
+	)[]
+	eData: (
+		| {
+				x: string
+				y: number
+		  }
+		| undefined
+	)[]
+} {
 	const infoValues: number[] | [] = data ? Object.values(data.totals) : []
 	const infoKeys: string[] | [] = data ? Object.keys(data.totals) : []
 	const labels: string[] | [] = data ? data.x_labels : []
-	const generated = data ? data.generation : []
-	const expected = data ? data.expected : []
+	const generated: number[] = data ? data.generation : []
+	const expected: number[] = data ? data.expected : []
 
+	/**
+	 * @type {{ type: string, body: string, heading: string}[]}
+	 */
 	const infos: InfoProps[] = infoKeys.map((item, index) => {
 		return {
 			type: item,
@@ -37,7 +63,16 @@ export function formatedData({ data, service }: Props) {
 		}
 	})
 
-	const gData = labels.map((item, index) => {
+	/**
+	 * @type {{x: string, y: string}}
+	 */
+	const gData: (
+		| {
+				x: string
+				y: number
+		  }
+		| undefined
+	)[] = labels.map((item, index) => {
 		if (service === 'daily') {
 			return {
 				x: item.slice(8, 10),
@@ -64,7 +99,16 @@ export function formatedData({ data, service }: Props) {
 		}
 	})
 
-	const eData = labels.map((item, index) => {
+	/**
+	 * @type {{x: string, y: string}}
+	 */
+	const eData: (
+		| {
+				x: string
+				y: number
+		  }
+		| undefined
+	)[] = labels.map((item, index) => {
 		if (service === 'daily') {
 			return {
 				x: item.slice(8, 10),
