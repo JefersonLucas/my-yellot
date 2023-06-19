@@ -38,7 +38,7 @@ npm start
 Para visualizar os testes deste aplicativo, execute o seguinte comando no terminal ou no prompt de comando:
 
 ```bash
-$ npm run test
+npm run test
 ```
 
 A resposta desses comandos deve ser algo como isto:
@@ -74,6 +74,8 @@ Este projeto está configurado com as seguintes stacks:
 - Victory Native: `36.6.11`
 - Git: `2.39.1`
 - Git Flow: `1.12.3`
+
+Para outros dependências, consulte o arquivo `package.json` deste projeto.
 
 ## Licença
 
