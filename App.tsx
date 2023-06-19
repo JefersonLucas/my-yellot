@@ -1,20 +1,29 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Loading } from '@components'
+import {
+	Montserrat_400Regular,
+	Montserrat_700Bold,
+	useFonts,
+} from '@expo-google-fonts/montserrat'
+import { HomeScreen } from '@screens/Home'
+import { theme } from '@theme'
+import { NativeBaseProvider } from 'native-base'
+import { StatusBar } from 'react-native'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+	const [fontsLoaded] = useFonts({
+		Montserrat_400Regular,
+		Montserrat_700Bold,
+	})
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+	return (
+		<NativeBaseProvider theme={theme}>
+			<StatusBar
+				barStyle="dark-content"
+				backgroundColor="transparent"
+				translucent
+			/>
+
+			{fontsLoaded ? <HomeScreen /> : <Loading />}
+		</NativeBaseProvider>
+	)
+}
